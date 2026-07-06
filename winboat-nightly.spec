@@ -64,22 +64,29 @@ export BUN_INSTALL="$PWD/.bun"
 curl -fsSL https://bun.sh/install | bash
 export PATH="$BUN_INSTALL/bin:$PATH"
 
-bun --version
-
 export HOME="$PWD/.home"
 export XDG_CACHE_HOME="$PWD/.cache"
 export npm_config_cache="$PWD/.npm-cache"
 export ELECTRON_CACHE="$PWD/.cache/electron"
 export ELECTRON_BUILDER_CACHE="$PWD/.cache/electron-builder"
 
+bun --version
 bun install --frozen-lockfile
 bun run build:linux-gs
 
 %install
 rm -rf %{buildroot}
 
+du -sh dist/* || true
+
+find dist/linux-unpacked -type d -name ".cache" -exec rm -rf {} +
+find dist/linux-unpacked -type d -name ".npm-cache" -exec rm -rf {} +
+find dist/linux-unpacked -type d -name ".bun" -exec rm -rf {} +
+
 install -d %{buildroot}/opt/winboat
 cp -a dist/linux-unpacked/. %{buildroot}/opt/winboat/
+
+du -h -d 3 %{buildroot}/opt/winboat | sort -h | tail -50
 
 install -d %{buildroot}%{_bindir}
 cat > %{buildroot}%{_bindir}/winboat <<'EOF'
