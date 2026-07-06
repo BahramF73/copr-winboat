@@ -76,6 +76,11 @@ mkdir -p unpacked
 tar -xjf dist/*.tar.bz2 -C unpacked
 
 install -d %{buildroot}/opt/winboat
+find dist/linux-unpacked/resources -maxdepth 1 -type f -exec ls -lh {} \;
+find dist/linux-unpacked/resources -type f -printf "%s %p\n" | sort -nr | head -30
+
+find unpacked -maxdepth 3 -type f -exec ls -lh {} \; | sort -k5 -hr | head -30
+find unpacked -type f -printf "%s %p\n" | sort -nr | head -30
 cp -a unpacked/. %{buildroot}/opt/winboat/
 
 find %{buildroot}/opt/winboat -type d -name ".cache" -exec rm -rf {} +
