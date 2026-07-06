@@ -17,7 +17,6 @@ Provides:       winboat = %{version}-%{release}
 ExclusiveArch:  x86_64
 
 BuildRequires:  bash
-BuildRequires:  bun
 BuildRequires:  golang
 BuildRequires:  git
 BuildRequires:  zip
@@ -59,6 +58,12 @@ if grep -q 'icons/winboat_logo.svg' electron-builder.json; then
 fi
 
 %build
+export BUN_INSTALL="$PWD/.bun"
+curl -fsSL https://bun.sh/install | bash
+export PATH="$BUN_INSTALL/bin:$PATH"
+
+bun --version
+
 export HOME="$PWD/.home"
 export XDG_CACHE_HOME="$PWD/.cache"
 export npm_config_cache="$PWD/.npm-cache"
