@@ -34,9 +34,6 @@ BuildRequires:  systemd-devel
 BuildRequires:  curl
 BuildRequires:  unzip
 
-# Runtime deps deliberately omitted.
-# WinBoat checks missing host requirements itself at runtime.
-
 AutoReqProv:    no
 
 %description
@@ -49,12 +46,8 @@ Electron application under /opt/winboat.
 %prep
 %autosetup -n winboat-main
 
-# We do not want electron-builder to generate AppImage/deb/rpm inside rpmbuild.
-# Build only the unpacked Linux directory, then package it ourselves.
-sed -i 's/electron-builder --linux/electron-builder --linux dir/' package.json
+sed -i 's/electron-builder --linux/electron-builder --linux tar.bz2/' package.json
 
-# Upstream build may reference a missing icons/winboat_logo.svg.
-# Use the existing PNG logo instead when needed.
 if grep -q 'icons/winboat_logo.svg' electron-builder.json; then
   sed -i 's#icons/winboat_logo.svg#src/renderer/public/img/winboat_logo.png#g' electron-builder.json
 fi
@@ -79,12 +72,15 @@ rm -rf %{buildroot}
 
 du -sh dist/* || true
 
-find dist/linux-unpacked -type d -name ".cache" -exec rm -rf {} +
-find dist/linux-unpacked -type d -name ".npm-cache" -exec rm -rf {} +
-find dist/linux-unpacked -type d -name ".bun" -exec rm -rf {} +
+mkdir -p unpacked
+tar -xjf dist/*.tar.bz2 -C unpacked
 
 install -d %{buildroot}/opt/winboat
-cp -a dist/linux-unpacked/. %{buildroot}/opt/winboat/
+cp -a unpacked/. %{buildroot}/opt/winboat/
+
+find %{buildroot}/opt/winboat -type d -name ".cache" -exec rm -rf {} +
+find %{buildroot}/opt/winboat -type d -name ".npm-cache" -exec rm -rf {} +
+find %{buildroot}/opt/winboat -type d -name ".bun" -exec rm -rf {} +
 
 du -h -d 3 %{buildroot}/opt/winboat | sort -h | tail -50
 
