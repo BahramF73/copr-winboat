@@ -46,8 +46,6 @@ Electron application under /opt/winboat.
 %prep
 %autosetup -n winboat-main
 
-sed -i 's/electron-builder --linux/electron-builder --linux tar.bz2/' package.json
-
 if grep -q 'icons/winboat_logo.svg' electron-builder.json; then
   sed -i 's#icons/winboat_logo.svg#src/renderer/public/img/winboat_logo.png#g' electron-builder.json
 fi
@@ -65,7 +63,14 @@ export ELECTRON_BUILDER_CACHE="$PWD/.cache/electron-builder"
 
 bun --version
 bun install --frozen-lockfile
-bun run build:linux-gs
+
+bash build-guest-server.sh
+bun scripts/build.ts
+
+rm -rf node_modules
+bun install --frozen-lockfile --production
+
+bunx electron-builder --linux tar.bz2
 
 %install
 rm -rf %{buildroot}
@@ -76,12 +81,14 @@ mkdir -p unpacked
 tar -xjf dist/*.tar.bz2 -C unpacked
 
 install -d %{buildroot}/opt/winboat
+
 find dist/linux-unpacked/resources -maxdepth 1 -type f -exec ls -lh {} \;
 find dist/linux-unpacked/resources -type f -printf "%s %p\n" | sort -nr | head -30
 
 find unpacked -maxdepth 3 -type f -exec ls -lh {} \; | sort -k5 -hr | head -30
 find unpacked -type f -printf "%s %p\n" | sort -nr | head -30
-cp -a unpacked/. %{buildroot}/opt/winboat/
+
+cp -a unpacked/winboat-*-x64/. %{buildroot}/opt/winboat/
 
 find %{buildroot}/opt/winboat -type d -name ".cache" -exec rm -rf {} +
 find %{buildroot}/opt/winboat -type d -name ".npm-cache" -exec rm -rf {} +
