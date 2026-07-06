@@ -11,6 +11,9 @@ License:        MIT
 URL:            %{forgeurl}
 Source0:        %{forgeurl}/archive/refs/heads/main.tar.gz#/WinBoat-main.tar.gz
 
+Conflicts:      winboat
+Provides:       winboat = %{version}-%{release}
+
 ExclusiveArch:  x86_64
 
 BuildRequires:  bash
