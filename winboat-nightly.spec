@@ -31,6 +31,8 @@ BuildRequires:  make
 BuildRequires:  python3
 BuildRequires:  pkgconfig(libusb-1.0)
 BuildRequires:  systemd-devel
+BuildRequires:  curl
+BuildRequires:  unzip
 
 # Runtime deps deliberately omitted.
 # WinBoat checks missing host requirements itself at runtime.
@@ -45,7 +47,7 @@ This package tracks the upstream main branch and installs the unpacked
 Electron application under /opt/winboat.
 
 %prep
-%autosetup -n WinBoat-main
+%autosetup -n winboat-main
 
 # We do not want electron-builder to generate AppImage/deb/rpm inside rpmbuild.
 # Build only the unpacked Linux directory, then package it ourselves.
