@@ -78,6 +78,7 @@ cp -a src pkgroot/
 cp -a guest_server pkgroot/
 cp -a data pkgroot/
 cp -a icons pkgroot/ || true
+cp -a patches pkgroot/ || true
 
 cd pkgroot
 bun install --frozen-lockfile --production
