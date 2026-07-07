@@ -47,8 +47,6 @@ Electron application under /opt/winboat.
 %prep
 %autosetup -n winboat-main
 
-sed -i 's/electron-builder --linux/electron-builder --linux tar.bz2/' package.json
-
 if grep -q 'icons/winboat_logo.svg' electron-builder.json; then
   sed -i 's#icons/winboat_logo.svg#src/renderer/public/img/winboat_logo.png#g' electron-builder.json
 fi
@@ -66,16 +64,32 @@ export ELECTRON_BUILDER_CACHE="$PWD/.cache/electron-builder"
 
 bun --version
 bun install --frozen-lockfile
-bun run build:linux-gs
 
-du -sh build || true
-du -sh build/main || true
-du -sh build/renderer || true
-find build -type f -printf "%s %p\n" | sort -nr | head -50
+bash build-guest-server.sh
+bun scripts/build.ts
 
-bunx asar extract dist/linux-unpacked/resources/app.asar app-asar
+rm -rf pkgroot
+mkdir -p pkgroot
+
+cp package.json electron-builder.json pkgroot/
+cp bun.lock* pkgroot/ 2>/dev/null || true
+cp -a build pkgroot/
+cp -a src pkgroot/
+cp -a guest_server pkgroot/
+cp -a data pkgroot/
+cp -a icons pkgroot/ || true
+
+cd pkgroot
+bun install --frozen-lockfile --production
+../node_modules/.bin/electron-builder --linux tar.bz2
+cd ..
+
+rm -rf dist
+mv pkgroot/dist dist
+
+du -sh dist/* || true
+bunx --yes @electron/asar extract dist/linux-unpacked/resources/app.asar app-asar
 du -h -d 3 app-asar | sort -h | tail -80
-find app-asar -type d -name node_modules -exec du -sh {} \; || true
 
 %install
 rm -rf %{buildroot}
