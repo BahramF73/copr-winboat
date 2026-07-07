@@ -67,6 +67,8 @@ bun install --frozen-lockfile
 
 bash build-guest-server.sh
 bun scripts/build.ts
+(cd src/main && ../../node_modules/.bin/tsc --pretty false)
+test -f build/main/main.js
 
 rm -rf pkgroot
 mkdir -p pkgroot
