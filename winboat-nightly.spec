@@ -33,6 +33,7 @@ BuildRequires:  pkgconfig(libusb-1.0)
 BuildRequires:  systemd-devel
 BuildRequires:  curl
 BuildRequires:  unzip
+BuildRequires:  nodejs
 
 AutoReqProv:    no
 
@@ -65,16 +66,16 @@ export ELECTRON_BUILDER_CACHE="$PWD/.cache/electron-builder"
 
 bun --version
 bun install --frozen-lockfile
-
-bash build-guest-server.sh
-bun scripts/build.ts
+bun run build:linux-gs
 
 du -sh build || true
 du -sh build/main || true
 du -sh build/renderer || true
 find build -type f -printf "%s %p\n" | sort -nr | head -50
 
-bun run build:linux-gs
+bunx asar extract dist/linux-unpacked/resources/app.asar app-asar
+du -h -d 3 app-asar | sort -h | tail -80
+find app-asar -type d -name node_modules -exec du -sh {} \; || true
 
 %install
 rm -rf %{buildroot}
