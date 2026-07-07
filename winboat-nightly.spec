@@ -4,7 +4,7 @@
 
 Name:           winboat-nightly
 Version:        0.9.0
-Release:        0.%{commitdate}%{?dist}
+Release:        1.%{commitdate}%{?dist}
 Summary:        Windows for Penguins - nightly build
 
 License:        MIT
