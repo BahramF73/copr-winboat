@@ -46,6 +46,8 @@ Electron application under /opt/winboat.
 %prep
 %autosetup -n winboat-main
 
+sed -i 's/electron-builder --linux/electron-builder --linux tar.bz2/' package.json
+
 if grep -q 'icons/winboat_logo.svg' electron-builder.json; then
   sed -i 's#icons/winboat_logo.svg#src/renderer/public/img/winboat_logo.png#g' electron-builder.json
 fi
@@ -67,10 +69,12 @@ bun install --frozen-lockfile
 bash build-guest-server.sh
 bun scripts/build.ts
 
-rm -rf node_modules
-bun install --frozen-lockfile --production
+du -sh build || true
+du -sh build/main || true
+du -sh build/renderer || true
+find build -type f -printf "%s %p\n" | sort -nr | head -50
 
-bunx electron-builder --linux tar.bz2
+bun run build:linux-gs
 
 %install
 rm -rf %{buildroot}
