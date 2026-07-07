@@ -81,7 +81,7 @@ cp -a icons pkgroot/ || true
 
 cd pkgroot
 bun install --frozen-lockfile --production
-../node_modules/.bin/electron-builder --linux tar.bz2
+bun ../node_modules/.bin/electron-builder --linux tar.bz2
 cd ..
 
 rm -rf dist
