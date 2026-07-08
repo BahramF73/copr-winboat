@@ -2,17 +2,19 @@
 %global forgeurl https://github.com/TibixDev/WinBoat
 %global commitdate %(date -u +%Y%m%d)
 
-Name:           winboat-nightly
+Name:           winboat-beta
 Version:        0.9.0
-Release:        1.%{commitdate}%{?dist}
-Summary:        Windows for Penguins - nightly build
+Release:        0.%{commitdate}%{?dist}
+Summary:        Windows for Penguins - beta build
 
 License:        MIT
 URL:            %{forgeurl}
 Source0:        %{forgeurl}/archive/refs/heads/main.tar.gz#/WinBoat-main.tar.gz
 
 Conflicts:      winboat
+Conflicts:      winboat-nightly
 Provides:       winboat = %{version}-%{release}
+Obsoletes:      winboat-nightly < %{version}-%{release}
 
 ExclusiveArch:  x86_64
 
@@ -128,7 +130,7 @@ chmod 0755 %{buildroot}%{_bindir}/winboat
 install -d %{buildroot}%{_datadir}/applications
 cat > %{buildroot}%{_datadir}/applications/winboat.desktop <<'EOF'
 [Desktop Entry]
-Name=WinBoat Nightly
+Name=WinBoat Beta
 Comment=Run Windows apps on Linux
 Exec=winboat %U
 Terminal=false
@@ -151,5 +153,10 @@ desktop-file-validate %{buildroot}%{_datadir}/applications/winboat.desktop
 %{_datadir}/icons/hicolor/256x256/apps/winboat.png
 
 %changelog
-* Mon Jul 06 2026 Bahram Farahmand <bahram.0098.bf@gmail.com> - 0.9.0-0.20260706
+* Tue Jul 07 2026 Bahram Farahmand <bahram.0098.bf@gmail.com> - 0.9.0-0.20260708
+- Rename package from winboat-nightly to winboat-beta
+- Switch to production dependency packaging
+- Reduce package size significantly
+
+* Mon Jul 06 2026 Bahram Farahmand <bahram.0098.bf@gmail.com> - 0.9.0-1.20260706
 - Initial nightly COPR package
