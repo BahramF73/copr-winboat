@@ -13,8 +13,6 @@ Source0:        %{forgeurl}/archive/refs/heads/main.tar.gz#/WinBoat-main.tar.gz
 
 Conflicts:      winboat
 Conflicts:      winboat-nightly
-Provides:       winboat = %{version}-%{release}
-Obsoletes:      winboat-nightly < %{version}-%{release}
 
 ExclusiveArch:  x86_64
 
@@ -92,33 +90,19 @@ cd ..
 rm -rf dist
 mv pkgroot/dist dist
 
-du -sh dist/* || true
-bunx --yes @electron/asar extract dist/linux-unpacked/resources/app.asar app-asar
-du -h -d 3 app-asar | sort -h | tail -80
-
 %install
 rm -rf %{buildroot}
-
-du -sh dist/* || true
 
 mkdir -p unpacked
 tar -xjf dist/*.tar.bz2 -C unpacked
 
 install -d %{buildroot}/opt/winboat
 
-find dist/linux-unpacked/resources -maxdepth 1 -type f -exec ls -lh {} \;
-find dist/linux-unpacked/resources -type f -printf "%s %p\n" | sort -nr | head -30
-
-find unpacked -maxdepth 3 -type f -exec ls -lh {} \; | sort -k5 -hr | head -30
-find unpacked -type f -printf "%s %p\n" | sort -nr | head -30
-
 cp -a unpacked/winboat-*-x64/. %{buildroot}/opt/winboat/
 
 find %{buildroot}/opt/winboat -type d -name ".cache" -exec rm -rf {} +
 find %{buildroot}/opt/winboat -type d -name ".npm-cache" -exec rm -rf {} +
 find %{buildroot}/opt/winboat -type d -name ".bun" -exec rm -rf {} +
-
-du -h -d 3 %{buildroot}/opt/winboat | sort -h | tail -50
 
 install -d %{buildroot}%{_bindir}
 cat > %{buildroot}%{_bindir}/winboat <<'EOF'
