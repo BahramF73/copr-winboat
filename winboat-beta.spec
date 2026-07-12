@@ -29,10 +29,8 @@ ExclusiveArch:  x86_64
 BuildRequires:  bash
 BuildRequires:  golang
 BuildRequires:  git
-BuildRequires:  zip
 BuildRequires:  findutils
 BuildRequires:  coreutils
-BuildRequires:  sed
 BuildRequires:  desktop-file-utils
 
 # Build toolchain and required development libraries.
@@ -132,7 +130,7 @@ find %{buildroot}/opt/winboat -type d -name ".bun" -exec rm -rf {} +
 # Install launcher wrapper.
 install -d %{buildroot}%{_bindir}
 cat > %{buildroot}%{_bindir}/winboat <<'EOF'
-#!/usr/bin/sh
+#!/bin/sh
 exec /opt/winboat/winboat "$@"
 EOF
 chmod 0755 %{buildroot}%{_bindir}/winboat
@@ -166,6 +164,11 @@ desktop-file-validate %{buildroot}%{_datadir}/applications/winboat.desktop
 %{_datadir}/icons/hicolor/256x256/apps/winboat.png
 
 %changelog
+* Mon Jul 13 2026 Bahram Farahmand <bahram.0098.bf@gmail.com> - 0.9.0-0.20260713
+- Clean up RPM spec
+- Improve build process
+- Refine beta packaging
+
 * Tue Jul 07 2026 Bahram Farahmand <bahram.0098.bf@gmail.com> - 0.9.0-0.20260708
 - Rename package from winboat-nightly to winboat-beta
 - Switch to production dependency packaging
